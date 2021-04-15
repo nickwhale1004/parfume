@@ -124,5 +124,5 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
 
 
-httpd = HTTPServer(('localhost', 2000), SimpleHTTPRequestHandler)
+httpd = HTTPServer(('194.67.105.184', 2000), SimpleHTTPRequestHandler)
 httpd.serve_forever()
