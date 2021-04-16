@@ -4,8 +4,6 @@ from aiogram import types, Dispatcher
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timedelta
 
-from bot import bot
-
 import catalog_state
 import database, mail, messeges, keyboards
 from messeges import MESSEGES
@@ -54,14 +52,14 @@ async def choose_comment(message: types.Message, state: FSMContext):
     await message.answer(messeges.createConfrimMessage(data[9], parfume[0], parfume[1], parfume[3], data[5], data[2], data[3], data[4],
                                           data[6], data[7], parfume[9]), reply_markup=keyboards.getConfirmKeyboard())
 
-async def deleteOrder(chat_id, order):
+async def deleteOrder(chat_id, order, bot):
     await bot.send_message(chat_id=chat_id, text=MESSEGES["Deleted"],
                            reply_markup=keyboards.getMainKeyboard())
     database.dataDelete(order)
 
-async def checkAgain(chat_id, order, header, name):
+async def checkAgain(chat_id, order, header, name, bot):
     my_date = datetime.now() + timedelta(hours=24)
-    scheduler.add_job(deleteOrder, "date", run_date=my_date, args=(chat_id, order), id="delete"+str(order))
+    scheduler.add_job(deleteOrder, "date", run_date=my_date, args=(chat_id, order, bot), id="delete"+str(order))
     await bot.send_message(chat_id=chat_id, text=messeges.createCheckAgainMessage(order, header, name),
                            reply_markup=keyboards.getCheckAgainKeyboard(order))
 
@@ -81,7 +79,8 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
         my_date = datetime.now() + timedelta(hours=1)
         scheduler.add_job(checkAgain, "date", run_date=my_date, args=(callback_query.from_user.id, data[9],
                                                                       database.getParfume(data[1])[0],
-                                                                      data[1]), id=str(data[9]))
+                                                                      data[1], callback_query.bot),
+                          id=str(data[9]))
 
         await state.finish()
     elif (callback_query.data == "repeat"):

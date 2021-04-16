@@ -28,6 +28,8 @@ def getParfumeNumber():
     data = cursor.fetchall()
     cursor.execute(f"UPDATE temp SET number2 = (?) WHERE chat_id = -1", (data[0][2] + 1,))
     conn.commit()
+    if data == None:
+        return []
     return data[0][2]
 
 def getNewOrderNumber():
@@ -35,6 +37,8 @@ def getNewOrderNumber():
     data = cursor.fetchall()
     cursor.execute(f"UPDATE temp SET number = (?) WHERE chat_id = -1", (data[0][1] + 1,))
     conn.commit()
+    if data == None:
+        return []
     return data[0][1]
 
 def setOrderNumber(chat_id):
@@ -44,6 +48,8 @@ def setOrderNumber(chat_id):
 def getOrderNumber(chat_id):
     cursor.execute(f"SELECT * FROM temp WHERE chat_id = '{chat_id}'")
     data = cursor.fetchall()
+    if data == None:
+        return []
     return data[0][1]
 
 def dataSetName(name, chat_id):
@@ -113,11 +119,15 @@ def dataGetTracks(order):
 def dataGetAll(order):
     cursor.execute("SELECT * FROM data WHERE orders = (?)", (order,))
     data = cursor.fetchall()
+    if data == None:
+        return []
     return data[0]
 
 def dataGet(chat_id):
     cursor.execute("SELECT * FROM data WHERE orders = (?)", (getOrderNumber(chat_id),))
     data = cursor.fetchall()
+    if data == None:
+        return []
     return data[0]
 
 def dataClear(chat_id):
@@ -146,6 +156,8 @@ def addHeader(header):
 def getParfume(name):
     cursor.execute("SELECT * FROM parfumes WHERE name = (?)", (name,))
     parfume = cursor.fetchall()
+    if parfume == None:
+        return []
     return parfume[0]
 
 def getParfumeByNumber(number):
@@ -158,6 +170,8 @@ def getParfumeByNumber(number):
 def getHeaders(sex = "u"):
     cursor.execute("SELECT header FROM headers")
     headers = cursor.fetchall()
+    if headers == None:
+        return []
     if sex != "u":
         for h in headers:
             cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (h[0], sex))
@@ -173,6 +187,8 @@ def getNames(header, sex = "u"):
     else:
         cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (header, sex))
     names = cursor.fetchall()
+    if names == None:
+        return []
     return names
 
 def deleteParfume(name):
@@ -192,6 +208,8 @@ def tempSetSex(chat_id, sex):
 def tempGetSex(chat_id):
     cursor.execute(f"SELECT sex FROM temp  WHERE chat_id = (?)", (chat_id,))
     sex = cursor.fetchall()
+    if sex == None:
+        return []
     return sex[0][0]
 
 def tempSetHeader(chat_id, header):
@@ -201,6 +219,8 @@ def tempSetHeader(chat_id, header):
 def tempGetHeader(chat_id):
     cursor.execute(f"SELECT header FROM temp  WHERE chat_id = (?)", (chat_id,))
     header = cursor.fetchall()
+    if header == None:
+        return []
     return header[0][0]
 
 def tempSetOrder(chat_id, order):
@@ -210,4 +230,6 @@ def tempSetOrder(chat_id, order):
 def tempGetOrder(chat_id):
     cursor.execute(f"SELECT orders FROM temp  WHERE chat_id = (?)", (chat_id,))
     order = cursor.fetchall()
+    if order == None:
+        return []
     return order[0][0]

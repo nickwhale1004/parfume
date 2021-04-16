@@ -57,7 +57,7 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
                                reply_markup=keyboards.getMainKeyboard())
     if (data[:6] == "delete"):
         buy_state.scheduler.remove_job(job_id="delete" + data[6:])
-        await buy_state.deleteOrder(callback_query.from_user.id, data[6:])
+        await buy_state.deleteOrder(callback_query.from_user.id, data[6:], callback_query.bot)
     elif (data[:2] == "ok"):
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
                                reply_markup=keyboards.getMainKeyboard())
