@@ -80,3 +80,8 @@ def getConfirmDeleteKeyboard(order):
     buttonYes = InlineKeyboardButton("Да", callback_data="confirmDelete"+str(order))
     buttonNo = InlineKeyboardButton("Нет", callback_data="no")
     return InlineKeyboardMarkup().add(buttonYes, buttonNo)
+
+def getCheckAgainKeyboard(order):
+    buttonYes = InlineKeyboardButton("Да", callback_data="ok" + str(order))
+    buttonNo = InlineKeyboardButton("Нет", callback_data="delete" + str(order))
+    return InlineKeyboardMarkup().add(buttonYes, buttonNo)

@@ -12,7 +12,6 @@ class Search(StatesGroup):
 async def get_number(message: types.Message, state: FSMContext):
     parfume = database.getParfumeByNumber(message.text)
     if parfume == []:
-        print("Вызов клавиатуры из errorSearch")
         await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard())
     else:
         await state.finish()
@@ -25,7 +24,6 @@ async def get_number(message: types.Message, state: FSMContext):
 async def inline(callback_query: types.CallbackQuery, state: FSMContext):
     if callback_query.data == "cancel":
         await state.finish()
-        print("Вызов клавиатуры из SearchCancel")
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                reply_markup=keyboards.getMainKeyboard())
 

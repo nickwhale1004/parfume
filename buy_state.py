@@ -1,10 +1,16 @@
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from datetime import datetime, timedelta
+
+from bot import bot
 
 import catalog_state
 import database, mail, messeges, keyboards
 from messeges import MESSEGES
+
+scheduler = AsyncIOScheduler()
 
 class OrderParfume(StatesGroup):
     chooseMan = State()
@@ -48,7 +54,18 @@ async def choose_comment(message: types.Message, state: FSMContext):
     await message.answer(messeges.createConfrimMessage(data[9], parfume[0], parfume[1], parfume[3], data[5], data[2], data[3], data[4],
                                           data[6], data[7], parfume[9]), reply_markup=keyboards.getConfirmKeyboard())
 
-async def inline(callback_query: types.CallbackQuery, state :FSMContext):
+async def deleteOrder(chat_id, order):
+    await bot.send_message(chat_id=chat_id, text=MESSEGES["Deleted"],
+                           reply_markup=keyboards.getMainKeyboard())
+    database.dataDelete(order)
+
+async def checkAgain(chat_id, order, header, name):
+    my_date = datetime.now() + timedelta(hours=24)
+    scheduler.add_job(deleteOrder, "date", run_date=my_date, args=(chat_id, order), id="delete"+str(order))
+    await bot.send_message(chat_id=chat_id, text=messeges.createCheckAgainMessage(order, header, name),
+                           reply_markup=keyboards.getCheckAgainKeyboard(order))
+
+async def inline(callback_query: types.CallbackQuery, state: FSMContext):
     if (callback_query.data == "no"):
         database.dataSetComment("Нет", callback_query.from_user.id)
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=(MESSEGES["Confirm_order"]))
@@ -58,14 +75,14 @@ async def inline(callback_query: types.CallbackQuery, state :FSMContext):
             messeges.createConfrimMessage(data[9], parfume[0], parfume[1], parfume[3], data[5], data[2], data[3], data[4],
                                           data[6], data[7], parfume[9]), reply_markup=keyboards.getConfirmKeyboard())
     elif (callback_query.data == "confirm"):
-        print("Вызов клавиатуры из but state confirm")
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Confirmed"],
                                               reply_markup=keyboards.getMainKeyboard())
         data = database.dataGet(callback_query.from_user.id)
-        parfume = database.getParfume(data[1])
-        email = messeges.createEmailMessage(data[9], parfume[0], parfume[1], parfume[3], data[5], data[2], data[3],
-                                            data[4], data[6], data[7])
-        mail.sendEmail(email)
+        my_date = datetime.now() + timedelta(hours=1)
+        scheduler.add_job(checkAgain, "date", run_date=my_date, args=(callback_query.from_user.id, data[9],
+                                                                      database.getParfume(data[1])[0],
+                                                                      data[1]), id=str(data[9]))
+
         await state.finish()
     elif (callback_query.data == "repeat"):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_man"],
@@ -100,7 +117,6 @@ async def inline(callback_query: types.CallbackQuery, state :FSMContext):
     elif(callback_query.data == "cancel"):
         database.dataDelete(database.dataGet(callback_query.from_user.id)[9])
         await state.finish()
-        print("Вызов клавиатуры из buy state cancel")
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                           reply_markup=keyboards.getMainKeyboard())
 

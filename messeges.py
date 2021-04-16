@@ -63,8 +63,11 @@ MESSEGES = {
                 "\n<b>Telegram:</b> +79011069026"
                 "\n<b>Telegram-канал:</b> <a href='https://t.me/parfumediscount'>посмотреть</a>"
                 "\n<b>Ebay-магазин:</b> <a href='https://www.ebay.com/usr/nikit0-52'>перейти</a>"
-                "\n<b>Instagram:</b> <a href='https://www.instagram.com/parfum_rostova161'>перейти</a>"
+                "\n<b>Instagram:</b> <a href='https://www.instagram.com/parfum_rostova161'>перейти</a>",
+    "Ok": "Отлично, тогда мы готовим его к отправке!"
 }
+def createCheckAgainMessage(order, header, name):
+    return f"Во избежание случайных заказов, мы выслали Вам это сообщение. Вы действительно ждёте свой заказ №{order} ({header} {name})?"
 
 def createParfumeMessage(parfume):
     sexText = ""

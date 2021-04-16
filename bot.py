@@ -25,7 +25,6 @@ dp = Dispatcher(
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    print("Вызов клавиатуры из start")
     database.createTemp(message.from_user.id)
     await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard())
 
@@ -41,7 +40,10 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Confirm_delete"],
                                reply_markup=keyboards.getConfirmDeleteKeyboard(data[11:]))
     if data[:13] == "confirmDelete":
-        print("Вызов клавиатуры из confirmDelete")
+        for job in buy_state.scheduler.get_jobs():
+            if job.id == data[13:]:
+                buy_state.scheduler.remove_job(job_id=data[13:])
+
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Deleted"],
                                reply_markup=keyboards.getMainKeyboard())
 
@@ -51,9 +53,20 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
                                                          o[4], o[6], o[7], o[8]))
         database.dataDelete(data[13:])
     if data[:2] == "no":
-        print("Вызов клавиатуры из bot no")
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Not deleted"],
                                reply_markup=keyboards.getMainKeyboard())
+    if (data[:6] == "delete"):
+        buy_state.scheduler.remove_job(job_id="delete" + data[6:])
+        await buy_state.deleteOrder(callback_query.from_user.id, data[6:])
+    elif (data[:2] == "ok"):
+        await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
+                               reply_markup=keyboards.getMainKeyboard())
+        buy_state.scheduler.remove_job(job_id="delete" + data[2:])
+        dataBase = database.dataGetAll(data[2:])
+        parfume = database.getParfume(dataBase[1])
+        email = messeges.createEmailMessage(dataBase[9], parfume[0], parfume[1], parfume[3], dataBase[5], dataBase[2], dataBase[3],
+                                            dataBase[4], dataBase[6], dataBase[7])
+        mail.sendEmail(email)
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message:types.Message):
@@ -95,6 +108,7 @@ async def on_startup(_):
     asyncio.create_task(scheduler())
 
 def main():
+    buy_state.scheduler.start()
     catalog_state.register_handlers_food(dp)
     search_state.register_handlers_food(dp)
     buy_state.register_handlers_food(dp)

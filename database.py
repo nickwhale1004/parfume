@@ -44,7 +44,6 @@ def setOrderNumber(chat_id):
 def getOrderNumber(chat_id):
     cursor.execute(f"SELECT * FROM temp WHERE chat_id = '{chat_id}'")
     data = cursor.fetchall()
-    print("ID", data, chat_id)
     return data[0][1]
 
 def dataSetName(name, chat_id):

@@ -12,7 +12,6 @@ class CatalogState(StatesGroup):
 
 async def choose_sex(message: types.Message, state: FSMContext):
     if message.text == "⬆️ Назад":
-        print("Вызов клавиатуры из choose_sex")
         await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard())
         await state.finish()
         return
@@ -67,7 +66,6 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
                                                                           database.tempGetSex(callback_query.from_user.id)))
         await CatalogState.previous()
     if data == "cancel":
-        print("Вызов клавиатуры из catalog_state inline")
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                               reply_markup=keyboards.getMainKeyboard())
         await state.finish()
