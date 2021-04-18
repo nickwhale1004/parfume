@@ -77,10 +77,10 @@ def createParfumeMessage(parfume):
         sexText = "Мужской"
     elif parfume[9] == "w":
         sexText = "Женский"
-    return ("<b>"+parfume[0] + " " + parfume[1] + "</b> (код: " + str(parfume[8]) + ')<i>\n'
+    return ("<b>"+parfume[0] + " " + parfume[1] + '</b><i>\n'
             + parfume[2] + "</i>" +
             "\n<b>Тип: </b>" + sexText +
-            "\n<b>В наличии: </b> " + str(parfume[7]) + " шт.")
+            "\n<b>В наличии: </b> " + str(parfume[7]) + " шт. (код: " + str(parfume[8]) + ')')
 
 def createConfrimMessage(order, header, name, price, man, city, adress, index, contacts, comments, sex):
     sexText = ""

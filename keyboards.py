@@ -3,7 +3,7 @@ from aiogram.types import ReplyKeyboardRemove,\
 import database
 
 def getMainKeyboard():
-    button_katalog = KeyboardButton('Каталог 📘')
+    button_katalog = KeyboardButton('Каталог 📙')
     button_search = KeyboardButton('Поиск 🔎')
     button_orders = KeyboardButton('Заказы 📖')
     button_about = KeyboardButton('Контакты 📱')

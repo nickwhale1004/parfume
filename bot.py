@@ -79,7 +79,7 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message:types.Message):
     database.dataClear(message.from_user.id)
-    if message.text == 'Каталог 📘':
+    if message.text == 'Каталог 📙':
         await message.answer(MESSEGES["Сhoose_sex"], reply_markup=keyboards.getSexKeyboard(),
                                disable_notification=True)
         await catalog_state.CatalogState.first()
