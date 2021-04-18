@@ -28,7 +28,8 @@ dp = Dispatcher(
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
     database.createTemp(message.from_user.id)
-    await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard())
+    await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
 
 @dp.callback_query_handler()
 async def process_callback_kb(callback_query: types.CallbackQuery):
@@ -36,18 +37,21 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
     if data[:10] == "addComment":
         database.tempSetOrder(callback_query.from_user.id, data[10:])
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Add_comment"],
-                               reply_markup=keyboards.getNothingKeyboard())
+                               reply_markup=keyboards.getNothingKeyboard(),
+                               disable_notification=True)
         await comment_state.AddComment.first()
     if data[:11] == "cancelOrder":
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Confirm_delete"],
-                               reply_markup=keyboards.getConfirmDeleteKeyboard(data[11:]))
+                               reply_markup=keyboards.getConfirmDeleteKeyboard(data[11:]),
+                               disable_notification=True)
     if data[:13] == "confirmDelete":
         for job in buy_state.scheduler.get_jobs():
             if job.id == data[13:]:
                 buy_state.scheduler.remove_job(job_id=data[13:])
 
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Deleted"],
-                               reply_markup=keyboards.getMainKeyboard())
+                               reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
 
         o = database.dataGetAll(data[13:])
         parfume = database.getParfume(o[1])
@@ -56,13 +60,15 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
         database.dataDelete(data[13:])
     if data[:2] == "no":
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Not deleted"],
-                               reply_markup=keyboards.getMainKeyboard())
+                               reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
     if (data[:6] == "delete"):
         buy_state.scheduler.remove_job(job_id="delete" + data[6:])
         await buy_state.deleteOrder(callback_query.from_user.id, data[6:], callback_query.bot)
     elif (data[:2] == "ok"):
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
-                               reply_markup=keyboards.getMainKeyboard())
+                               reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
         buy_state.scheduler.remove_job(job_id="delete" + data[2:])
         dataBase = database.dataGetAll(data[2:])
         parfume = database.getParfume(dataBase[1])
@@ -74,7 +80,8 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
 async def do_echo(message:types.Message):
     database.dataClear(message.from_user.id)
     if message.text == 'Каталог 📘':
-        await message.answer(MESSEGES["Сhoose_sex"], reply_markup=keyboards.getSexKeyboard())
+        await message.answer(MESSEGES["Сhoose_sex"], reply_markup=keyboards.getSexKeyboard(),
+                               disable_notification=True)
         await catalog_state.CatalogState.first()
     elif message.text == "Заказы 📖":
         orders = database.dataGetOrders(message.from_user.id)
@@ -84,14 +91,18 @@ async def do_echo(message:types.Message):
             parfume = database.getParfume(o[1])
             await message.answer(messeges.createOrderMessage(o[9], parfume[0], parfume[1], parfume[3], o[5], o[2], o[3],
                                                              o[4], o[6], o[7], o[8], parfume[9]),
-                                 reply_markup=keyboards.getOrderKeyboard(o[9]))
+                                 reply_markup=keyboards.getOrderKeyboard(o[9]),
+                               disable_notification=True)
     elif message.text == "Поиск 🔎":
-        await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard())
+        await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard(),
+                               disable_notification=True)
         await search_state.Search.first()
     elif message.text == "Наши гарантии ⭐️":
-        await message.answer(MESSEGES["Warranties"], reply_markup=keyboards.getMainKeyboard())
+        await message.answer(MESSEGES["Warranties"], reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
     elif message.text == "Контакты 📱":
-        await message.answer(MESSEGES["Contacts"], reply_markup=keyboards.getMainKeyboard())
+        await message.answer(MESSEGES["Contacts"], reply_markup=keyboards.getMainKeyboard(),
+                               disable_notification=True)
 
 async def checkTrack():
     orders = database.dataGetOrders()
@@ -108,6 +119,10 @@ async def scheduler():
 
 async def on_startup(_):
     asyncio.create_task(scheduler())
+    ids = database.tempGetChatIDs()
+    for id in ids:
+        await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+                              disable_notification=True)
 
 def main():
     buy_state.scheduler.start()

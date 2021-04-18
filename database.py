@@ -235,3 +235,10 @@ def tempGetOrder(chat_id):
     if order == None:
         return []
     return order[0][0]
+
+def tempGetChatIDs():
+    cursor.execute(f"SELECT chat_id FROM temp  WHERE chat_id <> '-1'")
+    ids = cursor.fetchall()
+    if ids == None:
+        return []
+    return ids

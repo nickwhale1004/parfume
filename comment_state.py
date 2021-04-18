@@ -9,7 +9,8 @@ class AddComment(StatesGroup):
 
 async def add_comment(message: types.Message, state: FSMContext):
     database.dataChangeComment(message.text, database.tempGetOrder(message.from_user.id))
-    await message.answer(text=MESSEGES["Added_comment"])
+    await message.answer(text=MESSEGES["Added_comment"],
+                               disable_notification=True)
     o = database.dataGetAll(database.tempGetOrder(message.from_user.id))
     parfume = database.getParfume(o[1])
     mail.sendEmail(
@@ -20,7 +21,8 @@ async def add_comment(message: types.Message, state: FSMContext):
 async def inline(callback_query: types.CallbackQuery, state :FSMContext):
     if(callback_query.data == "nothing"):
         await state.finish()
-        await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Not_added"])
+        await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Not_added"],
+                               disable_notification=True)
 
 def register_handlers_food(dp: Dispatcher):
     dp.register_callback_query_handler(inline, state=AddComment)
