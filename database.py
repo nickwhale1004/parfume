@@ -173,11 +173,13 @@ def getHeaders(sex = "u"):
     if headers == None:
         return []
     if sex != "u":
+        filtredHeaders = []
         for h in headers:
-            cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (h[0], sex))
+            cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (h[0], sex,))
             names = cursor.fetchall()
-            if names == []:
-                headers.remove(h)
+            if names != []:
+               filtredHeaders.append(h)
+        return filtredHeaders
     return headers
 
 

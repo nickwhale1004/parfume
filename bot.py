@@ -17,6 +17,8 @@ schedule_logger = logging.getLogger('schedule')
 schedule_logger.setLevel(level=logging.ERROR)
 
 bot = Bot (
+    #1753605795:AAE_zCdn82CKMqNwk5N4oGthFt7h3FBqYO4 test
+    #1752058019:AAGzucvWZN6SDSd-i_1Xa-dxggYA_TFEpWw realese
     token = '1752058019:AAGzucvWZN6SDSd-i_1Xa-dxggYA_TFEpWw', parse_mode = ParseMode.HTML
 )
 dp = Dispatcher(
