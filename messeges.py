@@ -60,7 +60,7 @@ MESSEGES = {
                   "\n🌟️️ К каждому товару в течении нескольких дней мы прикрепляем <b>track-номер</b> для отслеживания, чтобы Вы не беспокоились о сроках доставки."
                   "\n🌟️️ У нас Вы можете приобрести парфюм по <b>самым выгоным ценам.</b>",
     "Contacts": "В случае возникновения технических неполадок или дополнительных вопросов, напишите нам:"
-                "\n<b>Telegram:</b> +79011069026"
+                "\n<b>Telegram:</b> <a href='https://t.me/parfume_manager'>написать</a>"
                 "\n<b>Telegram-канал:</b> <a href='https://t.me/parfumediscount'>посмотреть</a>"
                 "\n<b>Ebay-магазин:</b> <a href='https://www.ebay.com/usr/nikit0-52'>перейти</a>"
                 "\n<b>Instagram:</b> <a href='https://www.instagram.com/parfum_rostova161'>перейти</a>",
@@ -77,8 +77,8 @@ def createParfumeMessage(parfume):
         sexText = "Мужской"
     elif parfume[9] == "w":
         sexText = "Женский"
-    return ("<b>"+parfume[0] + " " + parfume[1] + '</b><i>\n'
-            + parfume[2]+"</i>" +
+    return ("<b>"+parfume[0] + " " + parfume[1] + "</b> (код: " + str(parfume[8]) + ')<i>\n'
+            + parfume[2] + "</i>" +
             "\n<b>Тип: </b>" + sexText +
             "\n<b>В наличии: </b> " + str(parfume[7]) + " шт.")
 
@@ -148,7 +148,7 @@ def createEmailEditMessage(order, header, name, price, man, city, adress, index,
     Трек-номер: {xtrack}
         """
 
-def createOrderMessage(order, header, name, price, man, city, adress, index, contacts, comments, track, sex):
+def createOrderMessage(order, header, name, price, man, city, adress, index, contacts, comments, track, sex, code):
     sexText = ""
     if sex == "u":
         sexText = "Унисекс"
@@ -159,17 +159,18 @@ def createOrderMessage(order, header, name, price, man, city, adress, index, con
     xtrack = track
     if track == None :
         xtrack = "Ожидается"
-    return f"""---Заказ № {order} ---
-Товар: {header} {name}
-Тип: {sexText}
-К оплате: {price} руб.
-ФИО: {man}
-Город: {city}
-Адрес: {adress}
-Индекс: {index}
-Номер телефона (email): {contacts}
-Комментарий: {comments}
-Трек-номер: {xtrack}
+    return f"""<b>---Заказ № {order} ---</b>
+<b>Товар:</b> {header} {name}
+<b>Код товара: </b>{code}
+<b>Тип: </b>{sexText}
+<b>К оплате:</b> {price} руб.
+<b>ФИО: </b>{man}
+<b>Город:</b> {city}
+<b>Адрес: </b>{adress}
+<b>Индекс:</b> {index}
+<b>Номер телефона (email):</b> {contacts}
+<b>Комментарий:</b> {comments}
+<b>Трек-номер:</b> {xtrack}
     """
 
 def createTrackMessage(order, track):

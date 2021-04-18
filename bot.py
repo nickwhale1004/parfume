@@ -90,7 +90,7 @@ async def do_echo(message:types.Message):
         for o in reversed(orders):
             parfume = database.getParfume(o[1])
             await message.answer(messeges.createOrderMessage(o[9], parfume[0], parfume[1], parfume[3], o[5], o[2], o[3],
-                                                             o[4], o[6], o[7], o[8], parfume[9]),
+                                                             o[4], o[6], o[7], o[8], parfume[9], parfume[8]),
                                  reply_markup=keyboards.getOrderKeyboard(o[9]),
                                disable_notification=True)
     elif message.text == "Поиск 🔎":
