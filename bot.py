@@ -134,7 +134,7 @@ async def on_startup(_):
                                  disable_notification=True)
                 database.setHello(id[0], True)
             except aiogram.utils.exceptions.BotBlocked:
-                print(id)
+                None
 
 def main():
     buy_state.scheduler.start()
