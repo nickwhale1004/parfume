@@ -14,6 +14,7 @@ async def choose_sex(message: types.Message, state: FSMContext):
     if message.text == "⬆️ Назад":
         await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(message.from_user.id, True)
         await state.finish()
         return
     elif message.text == "👩🏻 ‍Женский":
@@ -78,6 +79,7 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                               reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(callback_query.from_user.id, True)
         await state.finish()
 
 def register_handlers_food(dp: Dispatcher):

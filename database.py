@@ -175,7 +175,7 @@ def getHeaders(sex = "u"):
     if sex != "u":
         filtredHeaders = []
         for h in headers:
-            cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (h[0], sex,))
+            cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u') AND count <> 0", (h[0], sex,))
             names = cursor.fetchall()
             if names != []:
                filtredHeaders.append(h)
@@ -185,9 +185,10 @@ def getHeaders(sex = "u"):
 
 def getNames(header, sex = "u"):
     if (sex == "u"):
-        cursor.execute("SELECT name FROM parfumes WHERE header = (?)", (header,))
+        cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND count <> 0", (header,))
     else:
-        cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u')", (header, sex))
+        cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u') AND count <> 0",
+                       (header, sex))
     names = cursor.fetchall()
     if names == None:
         return []
@@ -230,15 +231,39 @@ def tempSetOrder(chat_id, order):
     conn.commit()
 
 def tempGetOrder(chat_id):
-    cursor.execute(f"SELECT orders FROM temp  WHERE chat_id = (?)", (chat_id,))
+    cursor.execute(f"SELECT orders FROM temp WHERE chat_id = (?)", (chat_id,))
     order = cursor.fetchall()
     if order == None:
         return []
     return order[0][0]
 
 def tempGetChatIDs():
-    cursor.execute(f"SELECT chat_id FROM temp  WHERE chat_id <> '-1'")
+    cursor.execute(f"SELECT chat_id FROM temp WHERE chat_id <> '-1'")
     ids = cursor.fetchall()
     if ids == None:
         return []
     return ids
+
+def setHello(chat_id, value: bool):
+    res = 0
+    if value:
+        res = 1
+    cursor.execute(f"UPDATE temp SET hello = (?) WHERE chat_id = (?)", (res, chat_id))
+    conn.commit()
+
+def getHello(chat_id):
+    cursor.execute(f"SELECT hello FROM temp WHERE chat_id = (?)", (chat_id,))
+    hello = cursor.fetchall()
+    if (hello[0][0] == None): return False
+    if (hello[0][0] == 0): return False
+    return True
+
+def changePriceAndCount(name, price, count):
+    cursor.execute(f"UPDATE parfumes SET price = (?), count = (?) WHERE name = (?)", (price, count, name))
+    conn.commit()
+
+def minusCount(name):
+    cursor.execute(f"SELECT count FROM parfumes WHERE name = (?)", (name,))
+    count = cursor.fetchall()[0][0]
+    cursor.execute(f"UPDATE parfumes SET count = (?) WHERE name = (?)", (count - 1, name))
+    conn.commit()

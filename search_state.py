@@ -14,6 +14,7 @@ async def get_number(message: types.Message, state: FSMContext):
     if parfume == []:
         await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(message.from_user.id, True)
     else:
         await state.finish()
         await catalog_state.CatalogState.last()
@@ -29,6 +30,7 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(callback_query.from_user.id, True)
 
 def register_handlers_food(dp: Dispatcher):
     dp.register_callback_query_handler(inline, state=Search)

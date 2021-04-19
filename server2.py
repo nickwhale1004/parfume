@@ -14,6 +14,7 @@ import database
 #getorders
 #gettracks:*order
 #track:*number:*order
+#getpricecount:*name
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
@@ -51,6 +52,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
         self.wfile.write(jsonObj.encode())
 
+    def getParfumesPriceAndCount(self, name):
+        parfume = database.getParfume(name)
+        jsonObj = json.dumps([(parfume[3],), (parfume[7],)], sort_keys=False, indent=4, separators=(',', ': '),
+                             ensure_ascii=False)
+        self.wfile.write(jsonObj.encode())
+
     def deleteByName(self, name):
         database.deleteParfume(name)
         self.send_response(200)
@@ -64,8 +71,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def addTrack(self, track, order):
-        print("track", track)
-        print("order", order)
         database.dataSetTrack(track, order)
         self.send_response(200)
         self.wfile.write("added!".encode())
@@ -75,6 +80,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         names = database.dataGetTracks(order)
         jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
         self.wfile.write(jsonObj.encode())
+
+    def changePriceAndCount(self, name, price, count):
+        database.changePriceAndCount(name, price, count)
+        self.send_response(200)
+        self.wfile.write("added!".encode())
+        self.end_headers()
 
     # определяем метод `do_GET`
     def do_GET(self):
@@ -121,8 +132,15 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         if (request[:9] == "gettracks"):
             jsonObj = json.loads(body.decode("utf-8"))
             self.getTracks(jsonObj["order"])
+        if (request[:13] == "getpricecount"):
+            jsonObj = json.loads(body.decode("utf-8"))
+            self.getParfumesPriceAndCount(jsonObj["name"])
+        if (request[:16] == "changepricecount"):
+            jsonObj = json.loads(body.decode("utf-8"))
+            self.changePriceAndCount(jsonObj["name"], jsonObj["price"], jsonObj["count"])
         self.send_header('Content-type', 'text/html')
 
 
+#194.67.105.184
 httpd = HTTPServer(('194.67.105.184', 2000), SimpleHTTPRequestHandler)
 httpd.serve_forever()

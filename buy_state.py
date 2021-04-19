@@ -60,16 +60,14 @@ async def choose_comment(message: types.Message, state: FSMContext):
 
 async def deleteOrder(chat_id, order, bot):
     await bot.send_message(chat_id=chat_id, text=MESSEGES["Deleted"],
-                           reply_markup=keyboards.getMainKeyboard(),
-                               disable_notification=True)
+                           reply_markup=keyboards.getMainKeyboard())
     database.dataDelete(order)
 
 async def checkAgain(chat_id, order, header, name, bot):
     my_date = datetime.now() + timedelta(hours=24)
     scheduler.add_job(deleteOrder, "date", run_date=my_date, args=(chat_id, order, bot), id="delete"+str(order))
     await bot.send_message(chat_id=chat_id, text=messeges.createCheckAgainMessage(order, header, name),
-                           reply_markup=keyboards.getCheckAgainKeyboard(order),
-                               disable_notification=True)
+                           reply_markup=keyboards.getCheckAgainKeyboard(order))
 
 async def inline(callback_query: types.CallbackQuery, state: FSMContext):
     if (callback_query.data == "no"):
@@ -86,13 +84,14 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Confirmed"],
                                               reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(callback_query.from_user.id, True)
         data = database.dataGet(callback_query.from_user.id)
         my_date = datetime.now() + timedelta(hours=1)
         scheduler.add_job(checkAgain, "date", run_date=my_date, args=(callback_query.from_user.id, data[9],
                                                                       database.getParfume(data[1])[0],
                                                                       data[1], callback_query.bot),
                           id=str(data[9]))
-
+        database.minusCount(data[1])
         await state.finish()
     elif (callback_query.data == "repeat"):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_man"],
@@ -137,6 +136,7 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Hello"],
                                           reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(callback_query.from_user.id, True)
 
 def register_handlers_food(dp: Dispatcher):
     dp.register_callback_query_handler(inline, state=OrderParfume)

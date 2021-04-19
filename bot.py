@@ -30,6 +30,7 @@ async def process_start_command(message: types.Message):
     database.createTemp(message.from_user.id)
     await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+    database.setHello(message.from_user.id, True)
 
 @dp.callback_query_handler()
 async def process_callback_kb(callback_query: types.CallbackQuery):
@@ -69,6 +70,7 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
                                reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+        database.setHello(callback_query.from_user.id, True)
         buy_state.scheduler.remove_job(job_id="delete" + data[2:])
         dataBase = database.dataGetAll(data[2:])
         parfume = database.getParfume(dataBase[1])
@@ -83,6 +85,7 @@ async def do_echo(message:types.Message):
         await message.answer(MESSEGES["Сhoose_sex"], reply_markup=keyboards.getSexKeyboard(),
                                disable_notification=True)
         await catalog_state.CatalogState.first()
+        database.setHello(message.from_user.id, False)
     elif message.text == "Заказы 📖":
         orders = database.dataGetOrders(message.from_user.id)
         if orders == []:
@@ -93,10 +96,12 @@ async def do_echo(message:types.Message):
                                                              o[4], o[6], o[7], o[8], parfume[9], parfume[8]),
                                  reply_markup=keyboards.getOrderKeyboard(o[9]),
                                disable_notification=True)
+            database.setHello(message.from_user.id, False)
     elif message.text == "Поиск 🔎":
         await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard(),
                                disable_notification=True)
         await search_state.Search.first()
+        database.setHello(message.from_user.id, False)
     elif message.text == "Наши гарантии ⭐️":
         await message.answer(MESSEGES["Warranties"], reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
@@ -120,9 +125,12 @@ async def scheduler():
 async def on_startup(_):
     asyncio.create_task(scheduler())
     ids = database.tempGetChatIDs()
+
     for id in ids:
-        await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-                              disable_notification=True)
+        if database.getHello(id[0]) == False:
+            await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+                                disable_notification=True)
+            database.setHello(id[0], True)
 
 def main():
     buy_state.scheduler.start()
