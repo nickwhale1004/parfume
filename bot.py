@@ -1,6 +1,7 @@
 import asyncio
 import logging, messeges, search_state, buy_state, comment_state, catalog_state, aioschedule
 
+import aiogram.utils.exceptions
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import mail
@@ -128,9 +129,12 @@ async def on_startup(_):
 
     for id in ids:
         if database.getHello(id[0]) == False:
-            await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-                                disable_notification=True)
-            database.setHello(id[0], True)
+            try:
+                await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+                                 disable_notification=True)
+                database.setHello(id[0], True)
+            except aiogram.utils.exceptions.BotBlocked:
+                print(id)
 
 def main():
     buy_state.scheduler.start()
