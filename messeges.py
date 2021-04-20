@@ -102,7 +102,7 @@ def createConfrimMessage(order, header, name, price, man, city, adress, index, c
 <b>Комментарий: </b><i>{comments}</i>
     """
 
-def createEmailMessage(order, header, name, price, man, city, adress, index, contacts, comments):
+def createEmailMessage(order, header, name, price, man, city, adress, index, contacts, comments, chat_id):
     return f"""-------------Заказ № {order} -------------
 Товар: {header} {name}
 К оплате: {price} руб.
@@ -112,6 +112,7 @@ def createEmailMessage(order, header, name, price, man, city, adress, index, con
 Индекс: {index}
 Номер телефона (email): {contacts}
 Комментарий: {comments}
+ID: {chat_id}
     """
 
 def createEmailDeleteMessage(order, header, name, price, man, city, adress, index, contacts, comments, track):
