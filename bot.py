@@ -125,14 +125,14 @@ async def on_startup(_):
     asyncio.create_task(scheduler())
     ids = database.tempGetChatIDs()
 
-    #for id in ids:
-        #if database.getHello(id[0]) == False:
-            #try:
-            #  await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-             #                    disable_notification=True)
-              #  database.setHello(id[0], True)
-            #except aiogram.utils.exceptions.BotBlocked:
-           #     None
+    for id in ids:
+        if database.getHello(id[0]) == False:
+            try:
+              await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+                                 disable_notification=True)
+              database.setHello(id[0], True)
+            except aiogram.utils.exceptions.BotBlocked:
+              None
 
 def main():
     buy_state.scheduler.start()
