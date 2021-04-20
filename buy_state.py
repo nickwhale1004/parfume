@@ -38,6 +38,7 @@ async def choose_adress(message: types.Message, state: FSMContext):
     await OrderParfume.next()
 
 async def choose_index(message: types.Message, state: FSMContext):
+    if (not message.text.isdigit()): database.dataSetIndex(0, message.from_user.id)
     database.dataSetIndex(int(message.text), message.from_user.id)
     await message.answer(MESSEGES["Choose_contacts"], reply_markup=keyboards.getCancelKeyboard(),
                                disable_notification=True)

@@ -69,9 +69,7 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
         await buy_state.deleteOrder(callback_query.from_user.id, data[6:], callback_query.bot)
     elif (data[:2] == "ok"):
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
-                               reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
-        database.setHello(callback_query.from_user.id, True)
         buy_state.scheduler.remove_job(job_id="delete" + data[2:])
         dataBase = database.dataGetAll(data[2:])
         parfume = database.getParfume(dataBase[1])
@@ -127,14 +125,14 @@ async def on_startup(_):
     asyncio.create_task(scheduler())
     ids = database.tempGetChatIDs()
 
-    for id in ids:
-        if database.getHello(id[0]) == False:
-            try:
-                await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-                                 disable_notification=True)
-                database.setHello(id[0], True)
-            except aiogram.utils.exceptions.BotBlocked:
-                None
+    #for id in ids:
+        #if database.getHello(id[0]) == False:
+            #try:
+            #  await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+             #                    disable_notification=True)
+              #  database.setHello(id[0], True)
+            #except aiogram.utils.exceptions.BotBlocked:
+           #     None
 
 def main():
     buy_state.scheduler.start()
