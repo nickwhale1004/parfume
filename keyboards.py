@@ -7,8 +7,9 @@ def getMainKeyboard():
     button_search = KeyboardButton('Поиск 🔎')
     button_orders = KeyboardButton('Заказы 📖')
     button_about = KeyboardButton('Контакты 📱')
+    button_ask = KeyboardButton('Инструкции 📋️')
     button_garanties = KeyboardButton('Наши гарантии ⭐️')
-    return ReplyKeyboardMarkup(resize_keyboard=True).row(button_katalog, button_orders).add(button_search, button_garanties).add(button_about)
+    return ReplyKeyboardMarkup(resize_keyboard=True).row(button_katalog, button_orders,button_search).add(button_ask, button_garanties).add(button_about)
 
 def getSexKeyboard():
     buttonBack = KeyboardButton("⬆️ Назад")
@@ -84,4 +85,9 @@ def getConfirmDeleteKeyboard(order):
 def getCheckAgainKeyboard(order):
     buttonYes = InlineKeyboardButton("Да", callback_data="ok" + str(order))
     buttonNo = InlineKeyboardButton("Нет", callback_data="delete" + str(order))
+    return InlineKeyboardMarkup().add(buttonYes, buttonNo)
+
+def getLastKeyboard():
+    buttonYes = InlineKeyboardButton("Использовать", callback_data="yes" )
+    buttonNo = InlineKeyboardButton("Нет", callback_data="no")
     return InlineKeyboardMarkup().add(buttonYes, buttonNo)

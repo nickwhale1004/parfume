@@ -82,7 +82,7 @@ def dataSetComment(comment, chat_id):
 
 def dataChangeComment(comment, order):
     old = dataGetAll(order)[7]
-    cursor.execute(f"UPDATE data SET comment = (?) WHERE orders = '{order}'", (old+'*** '+comment,))
+    cursor.execute(f"UPDATE data SET comment = (?) WHERE orders = '{order}'", (old+'\n'+comment,))
     conn.commit()
 
 def dataSetTrack(track, order):

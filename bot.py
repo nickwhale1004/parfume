@@ -20,7 +20,7 @@ schedule_logger.setLevel(level=logging.ERROR)
 bot = Bot (
     #1753605795:AAE_zCdn82CKMqNwk5N4oGthFt7h3FBqYO4 test
     #1752058019:AAGzucvWZN6SDSd-i_1Xa-dxggYA_TFEpWw realese
-    token = '1752058019:AAGzucvWZN6SDSd-i_1Xa-dxggYA_TFEpWw', parse_mode = ParseMode.HTML
+    token = '1753605795:AAE_zCdn82CKMqNwk5N4oGthFt7h3FBqYO4', parse_mode = ParseMode.HTML
 )
 dp = Dispatcher(
     bot=bot, storage=MemoryStorage()
@@ -107,6 +107,8 @@ async def do_echo(message:types.Message):
     elif message.text == "Контакты 📱":
         await message.answer(MESSEGES["Contacts"], reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
+    elif message.text == "Инструкции 📋️":
+        await message.answer(MESSEGES["Guide"], reply_markup=keyboards.getMainKeyboard(), disable_notification=True)
 
 async def checkTrack():
     orders = database.dataGetOrders()
@@ -125,14 +127,14 @@ async def on_startup(_):
     asyncio.create_task(scheduler())
     ids = database.tempGetChatIDs()
 
-    for id in ids:
-        if database.getHello(id[0]) == False:
-            try:
-              await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-                                 disable_notification=True)
-              database.setHello(id[0], True)
-            except aiogram.utils.exceptions.BotBlocked:
-              None
+    #for id in ids:
+        #if database.getHello(id[0]) == False:
+            #try:
+              #await bot.send_message(chat_id=id[0], text=MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
+              #                   disable_notification=True)
+             # database.setHello(id[0], True)
+            #except aiogram.utils.exceptions.BotBlocked:
+              #None
 
 def main():
     buy_state.scheduler.start()

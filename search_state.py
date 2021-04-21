@@ -10,6 +10,12 @@ class Search(StatesGroup):
     getNumber = State()
 
 async def get_number(message: types.Message, state: FSMContext):
+    if(not message.text.isdigit()) :
+        await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard(),
+                             disable_notification=True)
+        database.setHello(message.from_user.id, True)
+        await state.finish()
+        return
     parfume = database.getParfumeByNumber(message.text)
     if parfume == []:
         await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard(),

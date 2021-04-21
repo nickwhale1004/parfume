@@ -65,9 +65,33 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
     if data[:3] == "buy":
         database.setOrderNumber(callback_query.from_user.id)
         database.dataSetName(data[3:], callback_query.from_user.id)
+
+        if(len(database.dataGetOrders(callback_query.from_user.id)) == 1):
+            await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_man"],
+                                reply_markup=keyboards.getCancelKeyboard(),
+                                disable_notification=True)
+            await buy_state.OrderParfume.first()
+        else:
+            await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_last"],
+                                                  reply_markup=keyboards.getLastKeyboard(),
+                                                  disable_notification=True)
+    if data[:3] == "yes":
+        print(database.dataGetOrders(callback_query.from_user.id))
+        order = database.dataGetOrders(callback_query.from_user.id)[-2]
+        database.dataSetCity(order[2], order[0])
+        database.dataSetAdress(order[3], order[0])
+        database.dataSetIndex(order[4], order[0])
+        database.dataSetMan(order[5], order[0])
+        database.dataSetContacts(order[6], order[0])
+
+        await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choosed_last"],
+                                                  reply_markup=keyboards.getCommentKeyboard(),
+                                                  disable_notification=True)
+        await buy_state.OrderParfume.chooseComment.set()
+    if data[:3] == "no":
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_man"],
-                               reply_markup=keyboards.getCancelKeyboard(),
-                               disable_notification=True)
+                                              reply_markup=keyboards.getCancelKeyboard(),
+                                              disable_notification=True)
         await buy_state.OrderParfume.first()
     if data[:4] == "back":
         await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Names"],
