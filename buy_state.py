@@ -87,6 +87,11 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
                                disable_notification=True)
         database.setHello(callback_query.from_user.id, True)
         data = database.dataGet(callback_query.from_user.id)
+        parfume = database.getParfume(data[1])
+        email = messeges.createEmailMessage(data[9], parfume[0], parfume[1], parfume[3], data[5], data[2],
+                                            data[3],
+                                            data[4], data[6], data[7], callback_query.from_user.id)
+        mail.sendEmail("Не подтвержденный\n"+email)
         my_date = datetime.now() + timedelta(hours=1)
         scheduler.add_job(checkAgain, "date", run_date=my_date, args=(callback_query.from_user.id, data[9],
                                                                       database.getParfume(data[1])[0],

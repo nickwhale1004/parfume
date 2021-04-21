@@ -76,7 +76,6 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
                                                   reply_markup=keyboards.getLastKeyboard(),
                                                   disable_notification=True)
     if data[:3] == "yes":
-        print(database.dataGetOrders(callback_query.from_user.id))
         order = database.dataGetOrders(callback_query.from_user.id)[-2]
         database.dataSetCity(order[2], order[0])
         database.dataSetAdress(order[3], order[0])
