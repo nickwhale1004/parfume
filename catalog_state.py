@@ -48,6 +48,8 @@ async def choose_parfume(message: types.Message, state: FSMContext):
         return
     name = message.text[2:message.text.rfind('🩸') - 1]
     parfume = database.getParfume(name)
+    await message.answer(text="Похоже на этот товар.", reply_markup=types.ReplyKeyboardRemove(),
+                         disable_notification=True)
     await message.answer_photo(parfume[4], caption=messeges.createParfumeMessage(parfume),
                                reply_markup=keyboards.getBuyKeyboard(name),
                                disable_notification=True)
