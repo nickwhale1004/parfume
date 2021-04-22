@@ -52,7 +52,7 @@ def getCancelKeyboard():
     return InlineKeyboardMarkup().add(buttonCancel, buttonBack)
 
 def getCommentKeyboard():
-    buttonNo = InlineKeyboardButton("Нет", callback_data="no")
+    buttonNo = InlineKeyboardButton("Не нужен", callback_data="no")
     buttonBack = InlineKeyboardButton("Назад", callback_data="back")
     buttonCancel = InlineKeyboardButton("Меню", callback_data="cancel")
     return InlineKeyboardMarkup().add(buttonNo).add(buttonCancel, buttonBack)
