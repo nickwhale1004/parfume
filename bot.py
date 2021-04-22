@@ -98,6 +98,7 @@ async def do_echo(message:types.Message):
                                disable_notification=True)
             database.setHello(message.from_user.id, False)
     elif message.text == "Поиск 🔎":
+        await message.answer(MESSEGES["Search"], reply_markup=types.ReplyKeyboardRemove())
         await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard(),
                                disable_notification=True)
         await search_state.Search.first()
