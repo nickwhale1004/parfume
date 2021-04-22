@@ -182,6 +182,34 @@ def getHeaders(sex = "u"):
         return filtredHeaders
     return headers
 
+def getHeaders(sex = "u"):
+    cursor.execute("SELECT header FROM headers")
+    headers = cursor.fetchall()
+    if headers == None:
+        return []
+    if sex != "u":
+        filtredHeaders = []
+        for h in headers:
+            cursor.execute("SELECT name FROM parfumes WHERE header = (?) AND (sex = (?) OR sex = 'u') AND count <> 0", (h[0], sex,))
+            names = cursor.fetchall()
+            if names != []:
+               filtredHeaders.append(h)
+        return filtredHeaders
+    return headers
+
+def getHeadersAll():
+    cursor.execute("SELECT header FROM headers")
+    headers = cursor.fetchall()
+    if headers == None:
+        return []
+    return headers
+
+def getNamesAll(header):
+    cursor.execute("SELECT name FROM parfumes WHERE header = (?)", (header,))
+    names = cursor.fetchall()
+    if names == None:
+        return []
+    return names
 
 def getNames(header, sex = "u"):
     if (sex == "u"):

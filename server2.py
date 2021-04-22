@@ -30,7 +30,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         database.addHeader(header)
 
     def sendHeaders(self):
-        headers = database.getHeaders()
+        headers = database.getHeadersAll()
         jsonObj = json.dumps(headers, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
         if headers == []:
             self.send_response(200)
@@ -48,7 +48,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(jsonObj.encode())
 
     def getParfumesNames(self, header):
-        names = database.getNames(header)
+        names = database.getNamesAll(header)
         jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
         self.wfile.write(jsonObj.encode())
 
