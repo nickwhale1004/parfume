@@ -273,3 +273,8 @@ def plusCount(name):
     count = cursor.fetchall()[0][0]
     cursor.execute(f"UPDATE parfumes SET count = (?) WHERE name = (?)", (count + 1, name))
     conn.commit()
+
+def getEmptyPositions():
+    cursor.execute(f"SELECT name FROM parfumes WHERE count = 0")
+    count = cursor.fetchall()
+    return count

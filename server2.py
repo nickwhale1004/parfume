@@ -79,6 +79,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def getTracks(self, order):
         names = database.dataGetTracks(order)
         jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
+        print(jsonObj)
         self.wfile.write(jsonObj.encode())
 
     def changePriceAndCount(self, name, price, count):
@@ -86,6 +87,15 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.wfile.write("added!".encode())
         self.end_headers()
+
+    def getEmptyPositions(self):
+        names = database.getEmptyPositions()
+        if names == []:
+            self.send_response(200)
+            self.end_headers()
+            return
+        jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
+        self.wfile.write(jsonObj.encode())
 
     # определяем метод `do_GET`
     def do_GET(self):
@@ -100,6 +110,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         if (request[:3] == "new"):
             print(request[5:])
             self.addHeader(request[5:])
+        if (request[:8] == "getempty"):
+            self.getEmptyPositions()
 
     def do_POST(self):
         print(self.path)
