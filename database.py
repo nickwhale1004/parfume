@@ -267,3 +267,9 @@ def minusCount(name):
     count = cursor.fetchall()[0][0]
     cursor.execute(f"UPDATE parfumes SET count = (?) WHERE name = (?)", (count - 1, name))
     conn.commit()
+
+def plusCount(name):
+    cursor.execute(f"SELECT count FROM parfumes WHERE name = (?)", (name,))
+    count = cursor.fetchall()[0][0]
+    cursor.execute(f"UPDATE parfumes SET count = (?) WHERE name = (?)", (count + 1, name))
+    conn.commit()

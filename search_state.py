@@ -11,24 +11,23 @@ class Search(StatesGroup):
 
 async def get_number(message: types.Message, state: FSMContext):
     if(not message.text.isdigit()) :
-        await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard(),
+        await message.answer(MESSEGES["Error_search"], reply_markup=types.ReplyKeyboardRemove(),
                              disable_notification=True)
-        database.setHello(message.from_user.id, True)
-        await state.finish()
+        await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard(),
+                             disable_notification=True)
         return
     parfume = database.getParfumeByNumber(message.text)
     if parfume == []:
-        await message.answer(MESSEGES["Error_search"], reply_markup=keyboards.getMainKeyboard(),
+        await message.answer(MESSEGES["Error_search"], reply_markup=types.ReplyKeyboardRemove(),
                                disable_notification=True)
-        database.setHello(message.from_user.id, True)
+        await message.answer(MESSEGES["Start_search"], reply_markup=keyboards.getMenuKeyboard(),
+                             disable_notification=True)
     else:
         await state.finish()
         await catalog_state.CatalogState.last()
         await message.answer_photo(parfume[4], caption=messeges.createParfumeMessage(parfume),
                                 reply_markup=keyboards.getBuyKeyboard(parfume[1]),
                                disable_notification=True)
-        return
-    await state.finish()
 
 async def inline(callback_query: types.CallbackQuery, state: FSMContext):
     if callback_query.data == "cancel":

@@ -59,6 +59,7 @@ async def process_callback_kb(callback_query: types.CallbackQuery):
         parfume = database.getParfume(o[1])
         mail.sendEmail(messeges.createEmailDeleteMessage(o[9], parfume[0], parfume[1], parfume[3], o[5], o[2], o[3],
                                                          o[4], o[6], o[7], o[8]))
+        database.plusCount(parfume[1])
         database.dataDelete(data[13:])
     if data[:2] == "no":
         await bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Not deleted"],
