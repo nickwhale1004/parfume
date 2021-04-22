@@ -275,6 +275,6 @@ def plusCount(name):
     conn.commit()
 
 def getEmptyPositions():
-    cursor.execute(f"SELECT name FROM parfumes WHERE count = 0")
+    cursor.execute(f"SELECT header, name FROM parfumes WHERE count = 0")
     count = cursor.fetchall()
     return count
