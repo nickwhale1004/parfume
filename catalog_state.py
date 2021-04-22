@@ -1,7 +1,9 @@
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
+
 import database, messeges, keyboards, buy_state
+import mail
 from messeges import MESSEGES
 
 class CatalogState(StatesGroup):
@@ -77,6 +79,18 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
             await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Choose_last"],
                                                   reply_markup=keyboards.getLastKeyboard(),
                                                   disable_notification=True)
+    if (data[:6] == "delete"):
+        buy_state.scheduler.remove_job(job_id="delete" + data[6:])
+        await buy_state.deleteOrder(callback_query.from_user.id, data[6:], callback_query.bot)
+    elif (data[:2] == "ok"):
+        await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
+                               disable_notification=True)
+        buy_state.scheduler.remove_job(job_id="delete" + data[2:])
+        dataBase = database.dataGetAll(data[2:])
+        parfume = database.getParfume(dataBase[1])
+        email = messeges.createEmailMessage(dataBase[9], parfume[0], parfume[1], parfume[3], dataBase[5], dataBase[2], dataBase[3],
+                                            dataBase[4], dataBase[6], dataBase[7], callback_query.from_user.id)
+        mail.sendEmail(email)
     if data[:3] == "yes":
         order = database.dataGetOrders(callback_query.from_user.id)[-2]
         database.dataSetCity(order[2], order[0])

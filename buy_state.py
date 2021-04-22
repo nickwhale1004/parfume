@@ -145,6 +145,18 @@ async def inline(callback_query: types.CallbackQuery, state: FSMContext):
                                           reply_markup=keyboards.getMainKeyboard(),
                                disable_notification=True)
         database.setHello(callback_query.from_user.id, True)
+    if (callback_query.data[:6] == "delete"):
+        scheduler.remove_job(job_id="delete" + callback_query.data[6:])
+        await deleteOrder(callback_query.from_user.id, data[6:], callback_query.bot)
+    elif (callback_query.data[:2] == "ok"):
+        await callback_query.bot.send_message(chat_id=callback_query.from_user.id, text=MESSEGES["Ok"],
+                               disable_notification=True)
+        scheduler.remove_job(job_id="delete" + callback_query.data[2:])
+        dataBase = database.dataGetAll(callback_query.data[2:])
+        parfume = database.getParfume(dataBase[1])
+        email = messeges.createEmailMessage(dataBase[9], parfume[0], parfume[1], parfume[3], dataBase[5], dataBase[2], dataBase[3],
+                                            dataBase[4], dataBase[6], dataBase[7], callback_query.from_user.id)
+        mail.sendEmail(email)
 
 def register_handlers_food(dp: Dispatcher):
     dp.register_callback_query_handler(inline, state=OrderParfume)
