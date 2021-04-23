@@ -306,3 +306,8 @@ def getEmptyPositions():
     cursor.execute(f"SELECT header, name FROM parfumes WHERE count = 0")
     count = cursor.fetchall()
     return count
+
+def getUsersCount():
+    cursor.execute(f"SELECT * FROM temp")
+    count = cursor.fetchall()
+    return len(count) - 1

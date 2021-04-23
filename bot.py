@@ -29,8 +29,7 @@ dp = Dispatcher(
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
     database.createTemp(message.from_user.id)
-    await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(),
-                               disable_notification=True)
+    await message.answer(MESSEGES["Hello"], reply_markup=keyboards.getMainKeyboard(), disable_notification=True)
     database.setHello(message.from_user.id, True)
 
 @dp.callback_query_handler()

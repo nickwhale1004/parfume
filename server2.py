@@ -97,6 +97,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         jsonObj = json.dumps(names, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
         self.wfile.write(jsonObj.encode())
 
+    def getUsers(self):
+        count = database.getUsersCount()
+        jsonObj = json.dumps([[count]], sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
+        self.wfile.write(jsonObj.encode())
+
     # определяем метод `do_GET`
     def do_GET(self):
         print(self.path)
@@ -112,9 +117,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.addHeader(request[5:])
         if (request[:8] == "getempty"):
             self.getEmptyPositions()
+        if (request[:5] == "users"):
+            self.getUsers()
 
     def do_POST(self):
-        print(self.path)
         request = self.path[1:]
         content_length = int(self.headers['Content-Length'])
         body = self.rfile.read(content_length)
